@@ -118,12 +118,6 @@
                 const { data } = await axios.get('/api/payment-methods-fee');
 
                 this.paymentMethods = data;
-
-                Object.keys(this.form).forEach(key => {
-                    if (this.paymentMethods.find(method => method.slug === key)) {
-                        this.form[key].fees = this.paymentMethods.find(method => method.slug === key).fees;
-                    }
-                });
             },
 
             async submit() {
