@@ -12,7 +12,23 @@
                 <div>
                     <h3 class="text-lg leading-6 font-medium text-gray-900">Realizar Cotação</h3>
                 </div>
-                <form method="POST" x-data="setup()" @submit.prevent="submit()">
+                <form method="POST" x-data="setup()" @submit.prevent="submit()" >
+                    <div class="rounded-md bg-red-50 p-4 mb-5" x-show="formErrors.length">
+                        <div class="flex">
+                            <div class="ml-3">
+                                <h3 class="text-sm font-medium text-red-800">
+                                    Ocorreu <span x-html="formErrors.length"></span> erro(s) ao realizar a cotação
+                                </h3>
+                                <div class="mt-2 text-sm text-red-700">
+                                    <ul role="list" class="list-disc pl-5 space-y-1">
+                                        <template x-for="(formError, index) in formErrors" :key="index">
+                                            <li x-text="formError.message"></li>
+                                        </template>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                     <div class="grid grid-cols-10 gap-4">
                         <div class="col-span-7 sm:col-span-3">
                             <x-jet-label>Valor</x-jet-label>
@@ -100,6 +116,7 @@
         return {
 
             currencies: [],
+            formErrors: [],
 
             form: {
                 origin_currency: 'BRL',
@@ -117,9 +134,18 @@
             async submit() {
                 try {
                     this.form.busy = true;
-                    const { data } = axios.post('/api/quotes', this.form)
+                    await axios.post('/api/quotes', this.form)
                     this.form.busy = false;
+                    this.formErrors = [];
                 } catch (error) {
+                    const { status } = error.response;
+                    if (status === 422) {
+                        Object.keys(error.response.data.errors).forEach(key => {
+                            this.formErrors.push({
+                                message: error.response.data.errors[key][0]
+                            });
+                        });
+                    }
                     this.form.busy = false;
                 }
             },

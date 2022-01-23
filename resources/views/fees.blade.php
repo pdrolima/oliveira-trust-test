@@ -100,8 +100,9 @@
             },
 
             async submit() {
+                this.form.busy = true;
                 const { data } = await axios.put('/api/exchange-fees', this.exchangeFees)
-                console.log(data);
+                this.form.busy = false;
             }
         }
     }
@@ -116,14 +117,13 @@
 
             async getPaymentMethods() {
                 const { data } = await axios.get('/api/payment-methods-fee');
-
                 this.paymentMethods = data;
             },
 
             async submit() {
                 try {
                     this.form.busy = true;
-                    const { data } = axios.put('/api/payment-methods-fee', this.paymentMethods)
+                    const { data } = await axios.put('/api/payment-methods-fee', this.paymentMethods)
                     this.form.busy = false;
                 } catch (error) {
                     this.form.busy = false;
