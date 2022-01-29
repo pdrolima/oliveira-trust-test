@@ -15,7 +15,7 @@ class ExchangeFeeController extends Controller
 
     public function update(ExchangeFeeRequest $request)
     {
-       $data = collect($request->all());
+       $data = collect($request->validated());
 
        return $data->map(function ($item) {
            return tap(ExchangeFee::find($item['id']), function ($fee) use ($item) {

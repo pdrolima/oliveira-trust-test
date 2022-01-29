@@ -15,7 +15,7 @@ class PaymentMethodsFeeController extends Controller
 
     public function update(PaymentMethodsFeeRequest $request)
     {
-        $data = collect($request->all());
+        $data = collect($request->validated());
 
         return $data->map((function ($value) {
            return tap(PaymentMethod::whereSlug($value['slug'])->firstOrFail(), function ($paymentMethod) use ($value) {
